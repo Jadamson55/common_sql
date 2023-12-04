@@ -154,6 +154,12 @@ RENAME COLUMN active_view_viewable_impressions TO active_view_pct_viewable_impre
 -- Create Table - Basic
 CREATE TABLE IF NOT EXISTS `xxx-jacob.no.datetime_files`
 (file_name STRING, player_number INT64, regular_name STRING)
+PARTITION BY date
+OPTIONS(
+  description="A table containing all the files in the bucket",
+  labels=[("org_unit", "development")]
+)
+
 
 
 -- Insert Values into Table - Basic
@@ -161,17 +167,14 @@ INSERT INTO `xxx.xxx.profiles` (profile_id, brand, countryCode, currencyCode, na
 VALUES ("3234234266889261",'CM','US','USD', 'company')
 
 
+
 -- Create Partitioned Table
 CREATE OR REPLACE TABLE `your_project_id.your_dataset_id.your_partitioned_table_id`
 PARTITION BY DATE(Order_Time)
 AS
 SELECT * FROM `your_project_id.your_dataset_id.your_source_table_id`
+WHERE DATE(Order_Time) BETWEEN '2016-01-01' AND '2016-12-31'
 
-
-
-
--- nested left joins and WITH !!!
--- GRIOT GARAGE JOIN
 
 CREATE OR REPLACE TABLE `xxx.xxx.table_1` AS
 -- Remove duplicate images of different sizes
