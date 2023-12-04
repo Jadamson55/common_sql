@@ -1,3 +1,66 @@
+#  Press Ctrl + F to find the query you want to use.
+# J. Adamson - 2023-12-04
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+# Statement with join, aggregation, CASE, filtering, grouping, having and ordering
+-- Assume we have two tables: 'orders' and 'customers'
+-- 'orders' table has columns: order_id, customer_id, order_date, total_amount
+-- 'customers' table has columns: customer_id, customer_name, country
+
+SELECT
+    c.customer_id,
+    c.customer_name,
+    c.country,
+    COUNT(o.order_id) AS total_orders,
+    SUM(o.total_amount) AS total_amount_spent,
+    CASE
+        WHEN COUNT(o.order_id) >= 5 THEN 'Loyal Customer'
+        ELSE 'Regular Customer'
+    END AS customer_type
+FROM
+    customers c
+JOIN
+    orders o ON c.customer_id = o.customer_id
+WHERE
+    o.order_date BETWEEN '2023-01-01' AND '2023-12-31'
+    AND c.country = 'United States'
+GROUP BY
+    c.customer_id, c.customer_name, c.country
+HAVING
+    COUNT(o.order_id) >= 2
+ORDER BY
+    total_amount_spent DESC;
+
+
+# PostgreSQL
+-- create table with primary key
+CREATE TABLE accounts (
+	user_id serial PRIMARY KEY,
+	username VARCHAR ( 50 ) UNIQUE NOT NULL,
+	password VARCHAR ( 50 ) NOT NULL,
+	email VARCHAR ( 255 ) UNIQUE NOT NULL,
+	created_on TIMESTAMP NOT NULL,
+        last_login TIMESTAMP 
+);
+
+-- create another table with primary key
+CREATE TABLE roles(
+   role_id serial PRIMARY KEY,
+   role_name VARCHAR (255) UNIQUE NOT NULL
+);
+
+-- create table with foreign_key
+CREATE TABLE account_roles (
+  user_id INT NOT NULL,
+  role_id INT NOT NULL,
+  grant_date TIMESTAMP,
+  PRIMARY KEY (user_id, role_id),
+  FOREIGN KEY (role_id)
+      REFERENCES roles (role_id),
+  FOREIGN KEY (user_id)
+      REFERENCES accounts (user_id)
+);
+
 # duh
 SELECT * FROM table_name; -- Retrieve all records from a table
 SELECT column1, column2 FROM table_name; -- Retrieve specific columns from a table
